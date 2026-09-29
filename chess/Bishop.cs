@@ -7,7 +7,7 @@ namespace chess
 {
     public class Bishop: Piece
     {
-        public List<Move> GetMovesForDirection(Piece[,] boardPieces, bool right, bool up)
+        static List<Move> GetMovesForDirection(Piece[,] boardPieces, bool right, bool up, int x, int y, bool white)
         {
             Func<int, bool> xFunction = Program.negativeFunction;
             Func<int, bool> yFunction = Program.negativeFunction;
@@ -29,15 +29,15 @@ namespace chess
 
             List<Move> moves = new List<Move>();
 
-            if (xFunction(coord.x + xAdder) && yFunction(coord.y + yAdder))
+            if (xFunction(x + xAdder) && yFunction(y + yAdder))
             {
-                for (int i = 1; xFunction(coord.x + (i * xAdder)) && yFunction(coord.y + (i * yAdder)); i ++)
+                for (int i = 1; xFunction(x + (i * xAdder)) && yFunction(y + (i * yAdder)); i ++)
                 {
                     int xMove = i * xAdder;
                     int yMove = i * yAdder;
                     
                     Move move = new Move(xMove, yMove);
-                    Piece piece = boardPieces[coord.x + xMove, coord.y + yMove];
+                    Piece piece = boardPieces[x + xMove, y + yMove];
 
                     if (piece == null)
                     {
@@ -58,18 +58,23 @@ namespace chess
             return moves;
         }
 
-        public override List<Move> GetMoves(Board board)
+        public static List<Move> GetBishopMoves(Piece[,] boardPieces, int x, int y, bool white)
         {
             List<Move> moves = new List<Move>();
-
-            Piece[,] boardPieces = Program.GenerateBoard(board);
-
-            moves.AddRange(GetMovesForDirection(boardPieces, true , true));
-            moves.AddRange(GetMovesForDirection(boardPieces, true , false));
-            moves.AddRange(GetMovesForDirection(boardPieces, false, true));
-            moves.AddRange(GetMovesForDirection(boardPieces, false, false));
+            
+            moves.AddRange(GetMovesForDirection(boardPieces, true , true , x, y, white));
+            moves.AddRange(GetMovesForDirection(boardPieces, true , false, x, y, white));
+            moves.AddRange(GetMovesForDirection(boardPieces, false, true , x, y, white));
+            moves.AddRange(GetMovesForDirection(boardPieces, false, false, x, y, white));
 
             return moves;
+        }
+
+        public override List<Move> GetMoves(Board board)
+        {
+            Piece[,] boardPieces = Program.GenerateBoard(board);
+
+            return GetBishopMoves(boardPieces, coord.x, coord.y, white);   
         }
 
         public Bishop(int x, int y, bool white):

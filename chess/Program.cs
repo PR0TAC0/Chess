@@ -103,6 +103,13 @@ public class Program
         }
     );
 
+    static Board queen = new Board(
+        new Piece[]
+        {
+            new Queen(3, 3, true)
+        }
+    );
+
     public static Piece[,] GenerateBoard(Board board)
     {
         Piece[,] boardPieces = new Piece[8, 8];
@@ -117,8 +124,8 @@ public class Program
 
 public static void Main()
     {
-        Console.WriteLine(bishops.Display());
+        Console.WriteLine(queen.Display());
 
-        bishops.Move();
+        queen.Move();
     }
 }

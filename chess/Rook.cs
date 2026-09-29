@@ -6,13 +6,13 @@ namespace chess
 {
     public class Rook: Piece
     {
-        public List<Move> GetMovesForDirection(Piece[,] boardPieces, bool horizontal, bool forward)
+        static List<Move> GetMovesForDirection(Piece[,] boardPieces, bool horizontal, bool forward, int x, int y, bool white)
         {
-            int position = coord.y;
+            int position = y;
 
             if (horizontal)
             {
-                position = coord.x;
+                position = x;
             }
 
             int adder = -1;
@@ -57,19 +57,24 @@ namespace chess
 
             return moves;
         }
-        
-        public override List<Move> GetMoves(Board board)
+
+        public static List<Move> GetRookMoves(Piece[,] boardPieces, int x, int y, bool white)
         {
             List<Move> moves = new List<Move>();
 
-            Piece[,] boardPieces = Program.GenerateBoard(board);
-
-            moves.AddRange(GetMovesForDirection(boardPieces, true , true));
-            moves.AddRange(GetMovesForDirection(boardPieces, true , false));
-            moves.AddRange(GetMovesForDirection(boardPieces, false, true));
-            moves.AddRange(GetMovesForDirection(boardPieces, false, false));
+            moves.AddRange(GetMovesForDirection(boardPieces, true , true , x, y, white));
+            moves.AddRange(GetMovesForDirection(boardPieces, true , false, x, y, white));
+            moves.AddRange(GetMovesForDirection(boardPieces, false, true , x, y, white));
+            moves.AddRange(GetMovesForDirection(boardPieces, false, false, x, y, white));
 
             return moves;
+        }
+        
+        public override List<Move> GetMoves(Board board)
+        {
+            Piece[,] boardPieces = Program.GenerateBoard(board);
+
+            return GetRookMoves(boardPieces, coord.x, coord.y, white);
         }
 
         public Rook(int x, int y, bool white):
