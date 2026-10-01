@@ -70,10 +70,8 @@ namespace chess
             return moves;
         }
         
-        public override List<Move> GetMoves(Board board)
+        public override List<Move> GetMoves(Piece[,] boardPieces)
         {
-            Piece[,] boardPieces = Program.GenerateBoard(board);
-
             return GetRookMoves(boardPieces, coord.x, coord.y, white);
         }
 

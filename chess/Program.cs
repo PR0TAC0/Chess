@@ -110,22 +110,22 @@ public class Program
         }
     );
 
-    public static Piece[,] GenerateBoard(Board board)
-    {
-        Piece[,] boardPieces = new Piece[8, 8];
-
-        foreach (Piece p in board.pieces)
+    static Board kings = new Board
+    (
+        new Piece[]
         {
-            boardPieces[p.coord.x, p.coord.y] = p;
+            new King(3, 3, true),
+            new King(0, 0, true),
+            new King(0, 7, true),
+            new King(7, 0, true),
+            new King(7, 7, true)
         }
-
-        return boardPieces;
-    }
+    );
 
 public static void Main()
     {
-        Console.WriteLine(queen.Display());
+        Console.WriteLine(knights.Display());
 
-        queen.Move();
+        knights.Move();
     }
 }

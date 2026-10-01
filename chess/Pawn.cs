@@ -13,11 +13,9 @@ namespace chess
             moved = true;
         }
 
-        public override List<Move> GetMoves(Board board)
+        public override List<Move> GetMoves(Piece[,] boardPieces)
         {
             List<Move> result = new List<Move>();
-
-            Piece[,] boardPieces = Program.GenerateBoard(board);
 
             if (white)
             {

@@ -77,15 +77,29 @@ namespace chess
             return result;
         }
 
+        Piece[,] GenerateBoard()
+        {
+            Piece[,] boardPieces = new Piece[8, 8];
+
+            foreach (Piece p in this.pieces)
+            {
+                boardPieces[p.coord.x, p.coord.y] = p;
+            }
+
+            return boardPieces;
+        }
+
         public bool Move()
         {
             List<BoardMove> moves = new List<BoardMove>();
+
+            Piece[,] boardPieces = GenerateBoard();
 
             foreach (Piece p in pieces)
             {
                 if (p.white == white)
                 {
-                    foreach (Move m in p.GetMoves(this))
+                    foreach (Move m in p.GetMoves(boardPieces))
                     {
                         BoardMove move = new BoardMove(p, m);
 

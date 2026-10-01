@@ -6,11 +6,9 @@ namespace chess
 {
     public class Queen: Piece
     {
-        public override List<Move> GetMoves(Board board)
+        public override List<Move> GetMoves(Piece[,] boardPieces)
         {
             List<Move> moves = new List<Move>();
-
-            Piece[,] boardPieces = Program.GenerateBoard(board);
 
             moves.AddRange(Rook.  GetRookMoves  (boardPieces, coord.x, coord.y, white));
             moves.AddRange(Bishop.GetBishopMoves(boardPieces, coord.x, coord.y, white));
