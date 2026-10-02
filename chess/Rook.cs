@@ -6,8 +6,8 @@ namespace chess
 {
     public class Rook: Piece
     {
-        static List<Move> GetMovesForDirection(Piece[,] boardPieces, bool horizontal, bool forward, int x, int y, bool white)
-        {
+        static List<Move> GetMovesForDirection(Piece[,] boardPieces, bool horizontal, bool forward, int x, int y, bool white, ref List<Coord> attacks)
+        {   
             int position = y;
 
             if (horizontal)
@@ -32,16 +32,19 @@ namespace chess
                 {
                     Move move = new Move(0, i);
                     Piece piece = boardPieces[0, position + i];
-                    
+                    Coord attack = new Coord(0, position + i);
+
                     if (horizontal)
                     {
                         move = new Move(i, 0);
                         piece = boardPieces[position + i, 0];
+                        attack = new Coord(position + i, 0);
                     }
 
                     if (piece == null)
                     {
                         moves.Add(move);
+                        attacks.Add(attack);
                     }
                     else
                     {
@@ -58,21 +61,21 @@ namespace chess
             return moves;
         }
 
-        public static List<Move> GetRookMoves(Piece[,] boardPieces, int x, int y, bool white)
+        public static List<Move> GetRookMoves(Piece[,] boardPieces, int x, int y, bool white, ref List<Coord> attacks)
         {
             List<Move> moves = new List<Move>();
 
-            moves.AddRange(GetMovesForDirection(boardPieces, true , true , x, y, white));
-            moves.AddRange(GetMovesForDirection(boardPieces, true , false, x, y, white));
-            moves.AddRange(GetMovesForDirection(boardPieces, false, true , x, y, white));
-            moves.AddRange(GetMovesForDirection(boardPieces, false, false, x, y, white));
+            moves.AddRange(GetMovesForDirection(boardPieces, true , true , x, y, white, ref attacks));
+            moves.AddRange(GetMovesForDirection(boardPieces, true , false, x, y, white, ref attacks));
+            moves.AddRange(GetMovesForDirection(boardPieces, false, true , x, y, white, ref attacks));
+            moves.AddRange(GetMovesForDirection(boardPieces, false, false, x, y, white, ref attacks));
 
             return moves;
         }
         
-        public override List<Move> GetMoves(Piece[,] boardPieces)
-        {
-            return GetRookMoves(boardPieces, coord.x, coord.y, white);
+        public override List<Move> GetMoves(Piece[,] boardPieces, ref List<Coord> attacks)
+        {   
+            return GetRookMoves(boardPieces, coord.x, coord.y, white, ref attacks);
         }
 
         public Rook(int x, int y, bool white):

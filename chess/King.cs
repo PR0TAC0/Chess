@@ -27,7 +27,7 @@ namespace chess
             }
         }
 
-        Move? GetMoveForDirection(int right, int up, Piece[,] boardPieces)
+        Move? GetMoveForDirection(int right, int up, Piece[,] boardPieces, ref List<Coord> attacks)
         {
             int xAdder = 5;
             Func<int, bool> xFunction = n => false;
@@ -53,6 +53,10 @@ namespace chess
                         return null;
                     }
                 }
+                else
+                {
+                    attacks.Add(new Coord(x, y));
+                }
                 
                 return new Move(xAdder, yAdder);
             }
@@ -62,7 +66,7 @@ namespace chess
             }
         }
         
-        public override List<Move> GetMoves(Piece[,] boardPieces)
+        public override List<Move> GetMoves(Piece[,] boardPieces, ref List<Coord> attacks)
         {
             List<Move> moves = new List<Move>();
 
@@ -72,7 +76,7 @@ namespace chess
                 {
                     if (!(i == 0 && j == 0)) // skip the "move" where the king does nothing
                     {
-                        Move move = GetMoveForDirection(i, j, boardPieces);
+                        Move move = GetMoveForDirection(i, j, boardPieces, ref attacks);
 
                         if (move != null)
                         {

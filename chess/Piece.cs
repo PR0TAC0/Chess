@@ -15,7 +15,7 @@ namespace chess
            this.coord.Move(coord);
         }
 
-        public abstract List<Move> GetMoves(Piece[,] boardPieces);
+        public abstract List<Move> GetMoves(Piece[,] boardPieces, ref List<Coord> attacks);
 
         public override string ToString()
         {

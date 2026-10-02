@@ -7,7 +7,7 @@ namespace chess
 {
     internal class Knight: Piece
     {
-        Move? GetMoveForDirection(Piece[,] boardPieces, bool horizontal, bool right, bool up)
+        Move? GetMoveForDirection(Piece[,] boardPieces, bool horizontal, bool right, bool up, ref List<Coord> attacks)
         {
             int coord1 = coord.y;
             int coord2 = coord.x;
@@ -63,20 +63,32 @@ namespace chess
             {
                 Piece piece;
                 Move move;
+                Coord attack;
                 
                 if (horizontal)
                 {
                     piece = boardPieces[newCoord1, newCoord2];
                     move = new Move(delta1, delta2);
+                    attack = new Coord(newCoord1, newCoord2);
                 }
                 else
                 {
                     piece = boardPieces[newCoord2, newCoord1];
                     move = new Move(delta2, delta1);
+                    attack = new Coord(newCoord2, newCoord1);
                 }
 
-                if (!(piece != null && piece.white == white))
+                if (piece != null)
                 {
+                    if(piece.white != white)
+                    {
+                        return move;
+                    }
+                }
+                else
+                {
+                    attacks.Add(attack);    
+                    
                     return move;
                 }
             }
@@ -85,7 +97,7 @@ namespace chess
         }
 
 
-        public override List<Move> GetMoves(Piece[,] boardPieces)
+        public override List<Move> GetMoves(Piece[,] boardPieces, ref List<Coord> attacks)
         {
             List<Move> moves = new List<Move>();
 
@@ -97,7 +109,7 @@ namespace chess
                 {
                     foreach (bool up in states)
                     {
-                        Move? move = GetMoveForDirection(boardPieces, horizontal, right, up);
+                        Move? move = GetMoveForDirection(boardPieces, horizontal, right, up, ref attacks);
                         
                         if (move != null)
                         {

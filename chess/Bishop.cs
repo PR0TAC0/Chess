@@ -7,7 +7,7 @@ namespace chess
 {
     public class Bishop: Piece
     {
-        static List<Move> GetMovesForDirection(Piece[,] boardPieces, bool right, bool up, int x, int y, bool white)
+        static List<Move> GetMovesForDirection(Piece[,] boardPieces, bool right, bool up, int x, int y, bool white, ref List<Coord> attacks)
         {
             Func<int, bool> xFunction = Program.negativeFunction;
             Func<int, bool> yFunction = Program.negativeFunction;
@@ -42,6 +42,7 @@ namespace chess
                     if (piece == null)
                     {
                         moves.Add(move);
+                        attacks.Add(new Coord(x + xMove, y + yMove));
                     }
                     else
                     {
@@ -58,21 +59,21 @@ namespace chess
             return moves;
         }
 
-        public static List<Move> GetBishopMoves(Piece[,] boardPieces, int x, int y, bool white)
+        public static List<Move> GetBishopMoves(Piece[,] boardPieces, int x, int y, bool white, ref List<Coord> attacks)
         {
             List<Move> moves = new List<Move>();
             
-            moves.AddRange(GetMovesForDirection(boardPieces, true , true , x, y, white));
-            moves.AddRange(GetMovesForDirection(boardPieces, true , false, x, y, white));
-            moves.AddRange(GetMovesForDirection(boardPieces, false, true , x, y, white));
-            moves.AddRange(GetMovesForDirection(boardPieces, false, false, x, y, white));
+            moves.AddRange(GetMovesForDirection(boardPieces, true , true , x, y, white, ref attacks));
+            moves.AddRange(GetMovesForDirection(boardPieces, true , false, x, y, white, ref attacks));
+            moves.AddRange(GetMovesForDirection(boardPieces, false, true , x, y, white, ref attacks));
+            moves.AddRange(GetMovesForDirection(boardPieces, false, false, x, y, white, ref attacks));
 
             return moves;
         }
 
-        public override List<Move> GetMoves(Piece[,] boardPieces)
+        public override List<Move> GetMoves(Piece[,] boardPieces, ref List<Coord> attacks)
         {
-            return GetBishopMoves(boardPieces, coord.x, coord.y, white);   
+            return GetBishopMoves(boardPieces, coord.x, coord.y, white, ref attacks);   
         }
 
         public Bishop(int x, int y, bool white):

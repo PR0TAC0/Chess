@@ -126,6 +126,13 @@ public static void Main()
     {
         Console.WriteLine(knights.Display());
 
-        knights.Move();
+        List<Coord> attacks = knights.Move();
+
+        Console.WriteLine("ATTACKS:");
+
+        foreach (Coord attack in attacks)
+        {
+            Console.WriteLine($"\t{attack}");
+        }
     }
 }

@@ -89,17 +89,18 @@ namespace chess
             return boardPieces;
         }
 
-        public bool Move()
+        public List<Coord> Move()
         {
             List<BoardMove> moves = new List<BoardMove>();
 
             Piece[,] boardPieces = GenerateBoard();
+            List<Coord> attacks = new List<Coord>();
 
             foreach (Piece p in pieces)
             {
                 if (p.white == white)
                 {
-                    foreach (Move m in p.GetMoves(boardPieces))
+                    foreach (Move m in p.GetMoves(boardPieces, ref attacks))
                     {
                         BoardMove move = new BoardMove(p, m);
 
@@ -119,7 +120,17 @@ namespace chess
             
             white = !white;
 
-            return true;
+            List<Coord> uniqueAttacks = new List<Coord>();
+
+            foreach (Coord attack in attacks)
+            {
+                if (!uniqueAttacks.Contains(attack))
+                {
+                    uniqueAttacks.Add(attack);
+                }
+            }
+            
+            return uniqueAttacks;
         }
     }
 }
