@@ -13,9 +13,6 @@ namespace chess
         King whiteKing;
         King blackKing;
 
-        List<Coord> whiteAttacks;
-        List<Coord> blackAttacks;
-
         public Board(Piece[] pieces, King whiteKing, King blackKing)
         {
             if (whiteKing.white != true)
@@ -120,7 +117,7 @@ namespace chess
             King blackKing = board.blackKing;
 
             boardPieces[whiteKing.coord.x, whiteKing.coord.y] = board.whiteKing;
-            boardPieces[blackKing.coord.x, blackKing.coord.x] = board.blackKing;
+            boardPieces[blackKing.coord.x, blackKing.coord.y] = board.blackKing;
 
             return boardPieces;
         }
@@ -168,7 +165,7 @@ namespace chess
 
             Board nextBoard;
 
-            List<int> indiciesToRemove = new List<int>();
+            List<int> indicesToRemove = new List<int>();
 
             for (int i = 0; i < moves.Count; i ++)
             {
@@ -255,11 +252,6 @@ namespace chess
                     nextBoard.whiteKing.GetMoves(newBoardPieces, ref attacks);
                 }
 
-                if (move.coord.Equals(new Coord(1, 0)))
-                {
-                    bool e = true;
-                }
-
                 foreach (Piece piece in pieces)
                 {
                     if (piece.white != white)
@@ -272,15 +264,22 @@ namespace chess
                 {
                     if (nextKing.coord.Equals(attack)) // move puts king under check
                     {
-                        indiciesToRemove.Add(i);
+                        indicesToRemove.Add(i);
                     }
                 }
             }
 
-            foreach(int i in indiciesToRemove)
+            List<BoardMove> newMoves = new List<BoardMove>();
+
+            for (int i = 0; i < moves.Count; i ++)
             {
-                moves.RemoveAt(i);
+                if (!indicesToRemove.Contains(i))
+                {
+                    newMoves.Add(moves[i]);
+                }
             }
+
+            moves = newMoves;
 
             if (moves.Count == 0)
             {
