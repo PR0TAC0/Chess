@@ -6,8 +6,8 @@ namespace chess
 {
     public class BoardMove
     {
-        Piece p;
-        Coord coord;
+        public Piece p { get; }
+        public Coord coord { get; }
         public BoardMove(Piece p, Move m)
         {
             this.p = p;

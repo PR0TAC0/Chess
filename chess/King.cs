@@ -45,19 +45,25 @@ namespace chess
             if (xFunction(x) && yFunction(y))
             {
                 Piece piece = boardPieces[x, y];
-                
+                Coord attack = new Coord(x, y);
+
                 if (piece != null)
                 {
                     if (piece.white == white)
                     {
                         return null;
                     }
+
+                    if (piece.piece == Program.Epiece.king)
+                    {
+                        attacks.Add(attack);
+                    }
                 }
                 else
                 {
-                    attacks.Add(new Coord(x, y));
+                    attacks.Add(attack);
                 }
-                
+
                 return new Move(xAdder, yAdder);
             }
             else
@@ -87,6 +93,19 @@ namespace chess
             }
 
             return moves;
+        }
+
+        public bool Check(List<Coord> attacks)
+        {
+            foreach (Coord attack in attacks)
+            {
+                if (attack.Equals(coord))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
         
         public King(int x, int y, bool white):

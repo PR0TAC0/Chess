@@ -39,16 +39,23 @@ namespace chess
                     Move move = new Move(xMove, yMove);
                     Piece piece = boardPieces[x + xMove, y + yMove];
 
+                    Coord attack = new Coord(x + xMove, y + yMove);
+
                     if (piece == null)
                     {
                         moves.Add(move);
-                        attacks.Add(new Coord(x + xMove, y + yMove));
+                        attacks.Add(attack);
                     }
                     else
                     {
                         if (piece.white != white)
                         {
                             moves.Add(move);
+
+                            if (piece.piece == Program.Epiece.king)
+                            {
+                                attacks.Add(attack);
+                            }
                         }
 
                         break;

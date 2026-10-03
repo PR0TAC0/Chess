@@ -41,17 +41,23 @@ namespace chess
                 Piece piece = boardPieces[newXCoord, newYCoord];
 
                 Move move = new Move(xAdder, yAdder);
+                Coord attack = new Coord(newXCoord, newYCoord);
 
                 if (piece != null)
                 {
-                    if (!piece.white)
+                    if (piece.white != white)
                     {
+                        if (piece.piece == Program.Epiece.king)
+                        {
+                            attacks.Add(attack);
+                        }
+                        
                         return move;
                     }
                 }
                 else
                 {
-                    attacks.Add(new Coord(xAdder, yAdder));
+                    attacks.Add(attack);
                 }
             }
 
@@ -69,7 +75,7 @@ namespace chess
                     result.Add(new Move(0, 1));
                 }
 
-                if (!moved && boardPieces[coord.x, coord.y + 2] == null)
+                if (coord.y < 6 && !moved && boardPieces[coord.x, coord.y + 2] == null)
                 {
                     result.Add(new Move(0, 2));
                 }
@@ -81,7 +87,7 @@ namespace chess
                     result.Add(new Move(0, -1));
                 }
 
-                if (!moved && boardPieces[coord.x, coord.y - 2] == null)
+                if (coord.y > 1 && !moved && boardPieces[coord.x, coord.y - 2] == null)
                 {
                     result.Add(new Move(0, -2));
                 }

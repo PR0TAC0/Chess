@@ -51,6 +51,11 @@ namespace chess
                         if (piece.white != white)
                         {
                             moves.Add(move);
+
+                            if (piece.piece == Program.Epiece.king)
+                            {
+                                attacks.Add(attack);
+                            }
                         }
 
                         break;
