@@ -47,20 +47,18 @@ namespace chess
                 King king = castle.king;
 
                 int rookX = rook.coord.x;
-                int rookY = rook.coord.y;
-
+                int y = rook.coord.y;
                 int kingX = king.coord.x;;
-                int kingY = king.coord.y;
 
                 if (castle.rook.coord.x == 7)
                 {
-                    rook.SetCoord(new Coord(rookX - 2,  rookY));
-                    king.SetCoord(new Coord(kingX + 2 , kingY));
+                    rook.SetCoord(new Coord(rookX - 2,  y));
+                    king.SetCoord(new Coord(kingX + 2 , y));
                 }
                 else // long castle
                 {
-                    rook.SetCoord(new Coord(rookX + 2, rookY));
-                    king.SetCoord(new Coord(kingX + 3, rookY));
+                    rook.SetCoord(new Coord(rookX + 2, y));
+                    king.SetCoord(new Coord(kingX - 3, y));
                 }    
             }
         }
