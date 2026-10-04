@@ -12,7 +12,7 @@ namespace chess
 
         public virtual void SetCoord(Coord coord)
         {
-           this.coord = coord;
+           this.coord.Move(coord);
         }
 
         public abstract List<Move> GetMoves(Piece[,] boardPieces, ref List<Coord> attacks);
@@ -85,7 +85,7 @@ namespace chess
 
                 Piece piece = (Piece) obj;
 
-                return this.white = piece.white && piece.coord.Equals(this.coord);
+                return this.white == piece.white && piece.coord.Equals(this.coord);
             }
             else
             {

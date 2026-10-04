@@ -36,10 +36,21 @@ public class Program
         new King(0, 7, false)
     );
 
+    static Board castleTest = new Board
+    (
+        new Piece[]
+        {
+            new Rook(0, 0, true),
+            new Rook(7, 0, true)
+        },
+        new King(3, 0, true),
+        new King(3, 7, false)
+    );
+
     public static void Main()
     {
-        Console.WriteLine(test.Display());
+        Console.WriteLine(castleTest.Display());
 
-        test.Move();
+        castleTest.Move();
     }
 }

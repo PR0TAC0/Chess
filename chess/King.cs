@@ -6,6 +6,15 @@ namespace chess
 {
     public class King: Piece
     {
+        public bool moved = false;
+
+        public override void SetCoord(Coord coord)
+        {
+            moved = true;
+
+            base.SetCoord(coord);
+        }
+        
         void GetValuesForMove(int direction, ref Func<int, bool> function, ref int adder)
         {
             function = n => true;

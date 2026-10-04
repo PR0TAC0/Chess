@@ -28,15 +28,41 @@ namespace chess
         }
 
         public Coord(int x, int y)
-        {
+        {   
             this.x = x;
             this.y = y;
         }
 
         public void Move(Coord move)
         {
-            this.x += move.x;
-            this.y += move.y;
+            if (!(move is Castle))
+            {
+                this.x = move.x;
+                this.y = move.y;
+            }
+            else
+            {
+                Castle castle = (Castle) move;
+                Rook rook = castle.rook;
+                King king = castle.king;
+
+                int rookX = rook.coord.x;
+                int rookY = rook.coord.y;
+
+                int kingX = king.coord.x;;
+                int kingY = king.coord.y;
+
+                if (castle.rook.coord.x == 7)
+                {
+                    rook.SetCoord(new Coord(rookX - 2,  rookY));
+                    king.SetCoord(new Coord(kingX + 2 , kingY));
+                }
+                else // long castle
+                {
+                    rook.SetCoord(new Coord(rookX + 2, rookY));
+                    king.SetCoord(new Coord(kingX + 3, rookY));
+                }    
+            }
         }
 
         void Check(int value)

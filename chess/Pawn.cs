@@ -11,6 +11,8 @@ namespace chess
         public override void SetCoord(Coord coord)
         {
             moved = true;
+
+            base.SetCoord(coord);
         }
 
         Move GetMoveForAttack(Piece[,] boardPieces, bool right, ref List<Coord> attacks)
@@ -117,6 +119,17 @@ namespace chess
         )
         {
             piece = Program.Epiece.pawn;
+        }
+
+        public Pawn(int x, int y, bool white, bool moved) :
+        base
+        (
+            white,
+            x, y
+        )
+        {
+            piece = Program.Epiece.pawn;
+            this.moved = moved;
         }
     }
 }

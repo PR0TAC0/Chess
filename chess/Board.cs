@@ -122,12 +122,104 @@ namespace chess
             return boardPieces;
         }
 
+        List<BoardMove> GenerateCastleMoves(bool white, List<Coord> attacks)
+        {
+            int y = 7;
+            King king = blackKing;
+
+            if (white)
+            {
+                y = 0;
+                king = whiteKing;
+            }
+
+            if (king.moved)
+            {
+                return new List<BoardMove>();
+            }
+
+            // must be at starting position
+            if (!king.coord.Equals(new Coord(3, y)))
+            {
+                return new List<BoardMove>();
+            }
+
+            List<BoardMove> moves = new List<BoardMove>();
+
+            List<Rook> rooks = new List<Rook>();
+
+            Coord rightRookCoord = new Coord(7, y);
+            Coord leftRookCoord = new Coord(0, y);
+
+            // Find rooks
+            foreach (Piece piece in pieces)
+            {
+                if (piece is Rook)
+                {
+                    Rook rook = (Rook)piece;
+
+                    if (!rook.moved)
+                    {
+                        if (new Coord[] { rightRookCoord, leftRookCoord }.Contains(rook.coord)) // One of the starting rooks
+                        {
+                            rooks.Add(rook);
+                        }
+                    }
+                }
+            }
+
+            foreach (Rook rook in rooks)
+            {
+                List<Coord> cancles = new List<Coord>();
+
+                if (rook.coord.Equals(rightRookCoord)) // rightmost rook
+                {
+                    cancles = new List<Coord>()
+                            {
+                                new Coord(6, y),
+                                new Coord(5, y),
+                                new Coord(4, y),
+                                new Coord(3, y)
+                            };
+                }
+                else
+                {
+                    cancles = new List<Coord>()
+                            {
+                                new Coord(1, y),
+                                new Coord(2, y),
+                                new Coord(3, y)
+                            };
+                }
+
+                bool ableToCastle = true;
+
+                foreach (Coord attack in attacks)
+                {
+                    if (cancles.Contains(attack))
+                    {
+                        ableToCastle = false;
+
+                        break;
+                    }
+                }
+
+                if (ableToCastle)
+                {
+                    moves.Add(new BoardMove(new Castle(rook, king)));
+                }
+            }
+
+            return moves;
+        }
+
         public bool Move()
         {
             List<BoardMove> moves = new List<BoardMove>();
 
             Piece[,] boardPieces = GenerateBoard(this);
             List<Coord> attackPlaceholder = new List<Coord>();
+            List<Coord> oldAttacks = new List<Coord>();
 
             King king = blackKing;
 
@@ -143,6 +235,19 @@ namespace chess
                     foreach (Move m in p.GetMoves(boardPieces, ref attackPlaceholder))
                     {
                         moves.Add(new BoardMove(p, m));
+                    }
+                }
+                else
+                {
+                    p.GetMoves(boardPieces, ref oldAttacks);
+
+                    if (white)
+                    {
+                        blackKing.GetMoves(boardPieces, ref oldAttacks);
+                    }
+                    else
+                    {
+                        whiteKing.GetMoves(boardPieces, ref oldAttacks);
                     }
                 }
             }
@@ -167,10 +272,12 @@ namespace chess
 
             List<int> indicesToRemove = new List<int>();
 
+            // Checking if moves are valid
             for (int i = 0; i < moves.Count; i ++)
             {
                 BoardMove move = moves[i];
                 
+                // Copying pieces (so old objects are not altered)
                 List<Piece> pieces = new List<Piece>();
 
                 foreach (Piece piece in this.pieces)
@@ -190,7 +297,9 @@ namespace chess
                             break;
 
                         case Pawn:
-                            newPiece = new Pawn(piece.coord.x, piece.coord.y, piece.white);
+                            Pawn pawn = (Pawn) piece;
+                            
+                            newPiece = new Pawn(piece.coord.x, piece.coord.y, piece.white, pawn.moved);
 
                             break;
 
@@ -208,6 +317,7 @@ namespace chess
                     pieces.Add(newPiece);
                 }
 
+                // Generating board
                 nextBoard = 
                 new Board
                 (
@@ -215,7 +325,8 @@ namespace chess
                     new King(whiteKing.coord.x, whiteKing.coord.y, true),
                     new King(blackKing.coord.x, blackKing.coord.y, false)
                 );
-
+                
+                // finding piece to move
                 Piece? pieceToMove = null;
                 
                 foreach(Piece piece in pieces)
@@ -223,9 +334,12 @@ namespace chess
                     if (piece.Equals(move.p))
                     {
                         pieceToMove = piece;
+
+                        break;
                     }
                 }
 
+                // finding king
                 King nextKing = nextBoard.blackKing;
 
                 if (white)
@@ -233,16 +347,20 @@ namespace chess
                     nextKing = nextBoard.whiteKing;
                 }
 
+                // default case: piece to move is the king
                 if (pieceToMove == null)
                 {
                     pieceToMove = nextKing;
                 }
 
-                pieceToMove.SetCoord(move.coord);
+                pieceToMove.SetCoord(move.coord); // Moving piece
+
+                // Generate Attacks
 
                 List<Coord> attacks = new List<Coord>();
                 Piece[,] newBoardPieces = GenerateBoard(nextBoard);
 
+                // Generating oponent's king's attacks
                 if (white)
                 {
                     nextBoard.blackKing.GetMoves(newBoardPieces, ref attacks);
@@ -252,6 +370,7 @@ namespace chess
                     nextBoard.whiteKing.GetMoves(newBoardPieces, ref attacks);
                 }
 
+                // Generating everyother attack
                 foreach (Piece piece in pieces)
                 {
                     if (piece.white != white)
@@ -259,6 +378,8 @@ namespace chess
                         piece.GetMoves(newBoardPieces, ref attacks);
                     }
                 }
+
+                // Check if move is valid
 
                 foreach (Coord attack in attacks)
                 {
@@ -271,12 +392,23 @@ namespace chess
 
             List<BoardMove> newMoves = new List<BoardMove>();
 
+            // Filtiring out invalid moves
             for (int i = 0; i < moves.Count; i ++)
             {
                 if (!indicesToRemove.Contains(i))
                 {
                     newMoves.Add(moves[i]);
                 }
+            }
+
+            // Adding castle move
+            if (white)
+            {
+                newMoves.AddRange(GenerateCastleMoves(true, oldAttacks));
+            }
+            else
+            {
+                newMoves.AddRange(GenerateCastleMoves(false, oldAttacks));
             }
 
             moves = newMoves;
@@ -288,7 +420,6 @@ namespace chess
 
             Dictionary<string, BoardMove> moveDict = new Dictionary<string, BoardMove>();
             
-            // Writemoves
             foreach (BoardMove move in moves)
             {
                 if (moves.FindAll(n => n.Equals(move)).Count > 1)

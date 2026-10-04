@@ -6,6 +6,15 @@ namespace chess
 {
     public class Rook: Piece
     {
+        public bool moved = false;
+
+        public override void SetCoord(Coord coord)
+        {
+            this.moved = true;
+
+            base.SetCoord(coord);
+        }
+
         static List<Move> GetMovesForDirection(Piece[,] boardPieces, bool horizontal, bool forward, int x, int y, bool white, ref List<Coord> attacks)
         {   
             int position = y;
