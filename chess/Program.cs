@@ -41,7 +41,8 @@ public class Program
         new Piece[]
         {
             new Rook(0, 0, true),
-            new Rook(7, 0, true)
+            new Rook(7, 0, true),
+            new Pawn(6, 0, true)
         },
         new King(3, 0, true),
         new King(3, 7, false)

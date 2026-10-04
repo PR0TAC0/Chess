@@ -193,14 +193,32 @@ namespace chess
                 }
 
                 bool ableToCastle = true;
+                Piece[,] boardPieces = GenerateBoard(this);
 
-                foreach (Coord attack in attacks)
-                {
-                    if (cancles.Contains(attack))
+                // Checks if pieces are empty
+                foreach(Coord coord in cancles)
+                { 
+                    if (!coord.Equals(new Coord(3, y)))
                     {
-                        ableToCastle = false;
+                        if (boardPieces[coord.x, coord.y] != null)
+                        {
+                            ableToCastle = false;
 
-                        break;
+                            break;
+                        }
+                    }
+                }
+
+                if (ableToCastle)
+                {
+                    foreach (Coord attack in attacks)
+                    {
+                        if (cancles.Contains(attack))
+                        {
+                            ableToCastle = false;
+
+                            break;
+                        }
                     }
                 }
 
