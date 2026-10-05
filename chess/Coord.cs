@@ -34,13 +34,13 @@ namespace chess
         }
 
         public void Move(Coord move)
-        {
-            if (!(move is Castle))
+        {   
+            if (!(move is Castle) && !(move is EnPassant)) // normal move
             {
                 this.x = move.x;
                 this.y = move.y;
             }
-            else
+            else if (move is Castle)
             {
                 Castle castle = (Castle) move;
                 Rook rook = castle.rook;
@@ -60,6 +60,26 @@ namespace chess
                     rook.SetCoord(new Coord(rookX + 2, y));
                     king.SetCoord(new Coord(kingX - 3, y));
                 }    
+            }
+            else // en passant
+            {
+                EnPassant enPassant = (EnPassant) move;
+                Pawn attacker = enPassant.attacker;
+                Pawn victim = enPassant.victim;
+                List<Piece> pieces = enPassant.pieces;
+
+                attacker.coord.x = victim.coord.x;
+
+               if (attacker.white)
+               {
+                    attacker.coord.y = 5;
+               }
+               else
+               {
+                    attacker.coord.y = 2;
+               }
+
+                pieces.Remove(victim);
             }
         }
 

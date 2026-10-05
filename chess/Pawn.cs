@@ -7,10 +7,17 @@ namespace chess
     public class Pawn: Piece
     {
         public bool moved = false;
+        public bool justAdvanced = false;
         
         public override void SetCoord(Coord coord)
         {
             moved = true;
+            justAdvanced = false;
+
+            if (Math.Abs(coord.y - this.coord.y) == 2)
+            {
+                justAdvanced = true;
+            }
 
             base.SetCoord(coord);
         }
@@ -121,7 +128,7 @@ namespace chess
             piece = Program.Epiece.pawn;
         }
 
-        public Pawn(int x, int y, bool white, bool moved) :
+        public Pawn(int x, int y, bool white, bool justAdvanced):
         base
         (
             white,
@@ -129,7 +136,8 @@ namespace chess
         )
         {
             piece = Program.Epiece.pawn;
-            this.moved = moved;
+            this.justAdvanced = justAdvanced;
         }
+
     }
 }

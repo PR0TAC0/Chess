@@ -231,6 +231,61 @@ namespace chess
             return moves;
         }
 
+        List<BoardMove> GenerateEnPassantMoves()
+        {
+            List<BoardMove> results = new List<BoardMove>();
+
+            List<Pawn> victims = new List<Pawn>();
+            List<Pawn> attackers = new List<Pawn>();
+
+            foreach (Piece piece in pieces)
+            {
+                if (piece is Pawn)
+                {
+                    Pawn pawn = (Pawn) piece;
+
+                    if (pawn.white != white)
+                    {
+                        if (pawn.justAdvanced)
+                        {
+                            victims.Add(pawn);
+                        }
+                    }
+                    else // same colour
+                    {
+                        attackers.Add(pawn);
+                    }
+                }
+            }
+
+            foreach (Pawn victim in victims)
+            {
+                foreach (Pawn attacker in attackers)
+                {
+                    bool rightY;
+
+                    if (white)
+                    {
+                        rightY = attacker.coord.y == 4;
+                    }
+                    else
+                    {
+                        rightY = attacker.coord.y == 3;
+                    }
+
+                    if (rightY)
+                    {
+                        if (Math.Abs(attacker.coord.x - victim.coord.x) == 1)
+                        {
+                            results.Add(new BoardMove(new EnPassant(attacker, victim, pieces)));
+                        }
+                    }
+                }
+            }
+
+            return results;
+        }
+
         public bool Move()
         {
             List<BoardMove> moves = new List<BoardMove>();
@@ -258,16 +313,16 @@ namespace chess
                 else
                 {
                     p.GetMoves(boardPieces, ref oldAttacks);
-
-                    if (white)
-                    {
-                        blackKing.GetMoves(boardPieces, ref oldAttacks);
-                    }
-                    else
-                    {
-                        whiteKing.GetMoves(boardPieces, ref oldAttacks);
-                    }
                 }
+            }
+
+            if (white)
+            {
+                blackKing.GetMoves(boardPieces, ref oldAttacks);
+            }
+            else
+            {
+                whiteKing.GetMoves(boardPieces, ref oldAttacks);
             }
 
             Move[] kingMoves = king.GetMoves(boardPieces, ref attackPlaceholder).ToArray();
@@ -277,14 +332,7 @@ namespace chess
                 moves.Add(new BoardMove(king, move));
             }
 
-            if (white)
-            {
-                king = whiteKing; 
-            }
-            else
-            {
-                king = blackKing;   
-            }
+            moves.AddRange(GenerateEnPassantMoves());
 
             Board nextBoard;
 

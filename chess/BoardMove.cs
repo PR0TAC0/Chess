@@ -19,6 +19,11 @@ namespace chess
             coord = castle;
         }
 
+        public BoardMove(EnPassant enPassant)
+        {
+            coord = enPassant;
+        }
+
         public override string ToString()
         {
             if (coord is Castle)
@@ -26,6 +31,22 @@ namespace chess
                 Castle castle = (Castle) coord;
 
                 return $"C:{Program.dict[Program.Epiece.rook]}{castle.rook.coord}";
+            }
+
+            if (coord is EnPassant)
+            {
+                EnPassant enPassant = (EnPassant) coord;
+
+                int y = 3;
+
+                if(enPassant.attacker.white)
+                {
+                    y = 5;
+                }
+
+                Coord newCoord = new Coord(enPassant.victim.coord.x, y);
+
+                return $"{Program.dict[Program.Epiece.pawn]}{newCoord}";
             }
             
             return Program.dict[p.piece] + coord;

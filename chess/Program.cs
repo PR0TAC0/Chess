@@ -48,10 +48,21 @@ public class Program
         new King(3, 7, false)
     );
 
+    static Board enPassantTest = new Board
+    (
+        new Piece[]
+        {
+            new Pawn(4, 4, false, true),
+            new Pawn(5, 4, true)
+        },
+        new King(3, 0, true),
+        new King(3, 7, false)
+    );
+
     public static void Main()
     {
-        Console.WriteLine(castleTest.Display());
+        Console.WriteLine(enPassantTest.Display());
 
-        castleTest.Move();
+        enPassantTest.Move();
     }
 }

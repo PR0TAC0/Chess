@@ -15,11 +15,6 @@ namespace chess
             this.king = king;
         }
 
-        public override string ToString()
-        {
-            return "C";
-        }
-
         public override bool Equals(object? obj)
         {
             return false;
