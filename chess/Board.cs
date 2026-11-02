@@ -286,6 +286,33 @@ namespace chess
             return results;
         }
 
+        void TakePiece(Piece pieceToMove, Coord coord, ref List<Piece> pieces)
+        {
+            pieceToMove.SetCoord(coord); // Moving piece
+
+            Piece pieceToRemove = new Pawn(0, 0, false);
+
+            // Removing taken piece
+            if (coord is EnPassant)
+            {
+                EnPassant enPassant = (EnPassant) coord;
+                
+                pieces.Remove(enPassant.victim);
+            }
+            else
+            {
+                foreach (Piece piece in pieces)
+                {
+                    if (pieceToMove.coord.Equals(piece.coord) && pieceToMove.white != piece.white)
+                    {
+                        pieceToRemove = piece;
+                    }
+                }
+            }
+
+            pieces.Remove(pieceToRemove);
+        }
+
         public bool Move()
         {
             List<BoardMove> moves = new List<BoardMove>();
@@ -342,6 +369,18 @@ namespace chess
             for (int i = 0; i < moves.Count; i ++)
             {
                 BoardMove move = moves[i];
+
+                bool moveIsEnPassant = false;
+                EnPassant enPassant = new EnPassant(new Pawn(0, 0, false), new Pawn(0, 0, true), new List<Piece>());
+
+                if (move.coord is EnPassant)
+                {
+                    moveIsEnPassant = true;
+                    enPassant = (EnPassant) move.coord;
+                }
+
+                Pawn attacker = new Pawn(0, 0, false);
+                Pawn victim = new Pawn(0, 0, false);
                 
                 // Copying pieces (so old objects are not altered)
                 List<Piece> pieces = new List<Piece>();
@@ -367,6 +406,18 @@ namespace chess
                             
                             newPiece = new Pawn(piece.coord.x, piece.coord.y, piece.white, pawn.moved);
 
+                            if (moveIsEnPassant)
+                            {
+                                if (newPiece.Equals(enPassant.attacker))
+                                {
+                                    attacker = (Pawn) newPiece;
+                                }
+                                else if (newPiece.Equals(enPassant.victim))
+                                {
+                                    victim = (Pawn) newPiece;
+                                }
+                            }
+
                             break;
 
                         case Knight:
@@ -381,6 +432,11 @@ namespace chess
                     }
 
                     pieces.Add(newPiece);
+                }
+
+                if (moveIsEnPassant)
+                {
+                    move = new BoardMove(new EnPassant(attacker, victim, pieces));
                 }
 
                 // Generating board
@@ -419,7 +475,15 @@ namespace chess
                     pieceToMove = nextKing;
                 }
 
-                pieceToMove.SetCoord(move.coord); // Moving piece
+                Coord coord = move.coord;
+
+                pieceToMove.SetCoord(coord); // Moving piece
+
+                Piece pieceToRemove = new Pawn(0, 0, false);
+
+                // Removing taken piece
+
+                TakePiece(pieceToMove, coord, ref nextBoard.pieces);
 
                 // Generate Attacks
 
@@ -437,7 +501,7 @@ namespace chess
                 }
 
                 // Generating everyother attack
-                foreach (Piece piece in pieces)
+                foreach (Piece piece in nextBoard.pieces)
                 {
                     if (piece.white != white)
                     {
@@ -517,6 +581,12 @@ namespace chess
                 try
                 {
                     selectedMove = moveDict[key];
+
+                    Piece piece = selectedMove.p;
+
+                    piece.SetCoord(selectedMove.coord);
+
+                    TakePiece(piece, selectedMove.coord, ref pieces);
 
                     break;
                 }

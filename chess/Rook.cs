@@ -40,13 +40,13 @@ namespace chess
                 for (int i = adder; function(position + i); i += adder)
                 {
                     Move move = new Move(0, i);
-                    Piece piece = boardPieces[0, position + i];
+                    Piece piece = boardPieces[x, position + i];
                     Coord attack = new Coord(0, position + i);
 
                     if (horizontal)
                     {
                         move = new Move(i, 0);
-                        piece = boardPieces[position + i, 0];
+                        piece = boardPieces[position + i, y];
                         attack = new Coord(position + i, 0);
                     }
 
